@@ -12,12 +12,6 @@ import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.api.*;
 import blusunrize.immersiveengineering.api.crafting.*;
 import blusunrize.immersiveengineering.api.energy.DieselHandler;
-import blusunrize.immersiveengineering.api.energy.wires.NetHandlerCapability;
-import blusunrize.immersiveengineering.api.energy.wires.WireType;
-import blusunrize.immersiveengineering.api.energy.wires.localhandlers.EnergyTransferHandler;
-import blusunrize.immersiveengineering.api.energy.wires.localhandlers.LocalNetworkHandler;
-import blusunrize.immersiveengineering.api.energy.wires.localhandlers.WireDamageHandler;
-import blusunrize.immersiveengineering.api.energy.wires.redstone.RedstoneNetworkHandler;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import blusunrize.immersiveengineering.api.shader.CapabilityShader;
 import blusunrize.immersiveengineering.api.shader.ShaderRegistry;
@@ -28,6 +22,12 @@ import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler.ChemthrowerEf
 import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler.ChemthrowerEffect_Extinguish;
 import blusunrize.immersiveengineering.api.tool.ChemthrowerHandler.ChemthrowerEffect_Potion;
 import blusunrize.immersiveengineering.api.tool.ExternalHeaterHandler.DefaultFurnaceAdapter;
+import blusunrize.immersiveengineering.api.wires.NetHandlerCapability;
+import blusunrize.immersiveengineering.api.wires.WireType;
+import blusunrize.immersiveengineering.api.wires.localhandlers.EnergyTransferHandler;
+import blusunrize.immersiveengineering.api.wires.localhandlers.LocalNetworkHandler;
+import blusunrize.immersiveengineering.api.wires.localhandlers.WireDamageHandler;
+import blusunrize.immersiveengineering.api.wires.redstone.RedstoneNetworkHandler;
 import blusunrize.immersiveengineering.common.IEConfig.Ores.OreConfig;
 import blusunrize.immersiveengineering.common.blocks.*;
 import blusunrize.immersiveengineering.common.blocks.FakeLightBlock.FakeLightTileEntity;
@@ -57,6 +57,7 @@ import blusunrize.immersiveengineering.common.util.IEPotions;
 import blusunrize.immersiveengineering.common.util.compat.IECompatModule;
 import blusunrize.immersiveengineering.common.util.fluids.IEFluid;
 import blusunrize.immersiveengineering.common.util.fluids.PotionFluid;
+import blusunrize.immersiveengineering.common.wires.IEWireTypes;
 import blusunrize.immersiveengineering.common.world.IEWorldGen;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.block.Block;
@@ -146,7 +147,7 @@ public class IEContent
 		/*BULLETS*/
 		BulletItem.initBullets();
 		/*WIRES*/
-		WireType.registerWires();
+		IEWireTypes.modConstruction();
 		/*CONVEYORS*/
 		ConveyorHandler.registerMagnetSupression((entity, iConveyorTile) -> {
 			CompoundNBT data = entity.getPersistentData();
@@ -488,6 +489,7 @@ public class IEContent
 		Tools.drillheadIron = new DrillheadItem(DrillheadItem.IRON);
 		Tools.drillheadSteel = new DrillheadItem(DrillheadItem.STEEL);
 		Weapons.revolver = new RevolverItem();
+		Weapons.speedloader = new SpeedloaderItem();
 		Weapons.chemthrower = new ChemthrowerItem();
 		Weapons.railgun = new RailgunItem();
 		for(ResourceLocation bulletType : BulletHandler.getAllKeys())
@@ -836,8 +838,7 @@ public class IEContent
 
 	public static void preInit()
 	{
-		WireType.init();
-
+		IEWireTypes.setup();
 		DataSerializers.registerSerializer(IEFluid.OPTIONAL_FLUID_STACK);
 
 		IELootFunctions.preInit();

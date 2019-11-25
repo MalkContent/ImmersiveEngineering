@@ -6,7 +6,7 @@
  * Details can be found in the license file in the root folder of this project
  */
 
-package blusunrize.immersiveengineering.api.energy.wires;
+package blusunrize.immersiveengineering.api.wires;
 
 
 import blusunrize.immersiveengineering.api.ApiUtils;
@@ -31,8 +31,6 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-
-import static blusunrize.immersiveengineering.api.energy.wires.WireType.*;
 
 public abstract class ImmersiveConnectableTileEntity extends IEBaseTileEntity implements IImmersiveConnectable
 {
@@ -76,22 +74,6 @@ public abstract class ImmersiveConnectableTileEntity extends IEBaseTileEntity im
 	{
 		super.setWorld(worldIn);
 		globalNet = GlobalWireNetwork.getNetwork(worldIn);
-	}
-
-	protected float getBaseDamage(Connection c)
-	{
-		if(c.type==COPPER)
-			return 8*2F/c.type.getTransferRate();
-		else if(c.type==ELECTRUM)
-			return 8*5F/c.type.getTransferRate();
-		else if(c.type==STEEL)
-			return 8*15F/c.type.getTransferRate();
-		return 0;
-	}
-
-	protected float getMaxDamage(Connection c)
-	{
-		return c.type.getTransferRate()/8F*getBaseDamage(c);
 	}
 
 	@Override

@@ -6,7 +6,7 @@
  * Details can be found in the license file in the root folder of this project
  */
 
-package blusunrize.immersiveengineering.api.energy.wires;
+package blusunrize.immersiveengineering.api.wires;
 
 import blusunrize.immersiveengineering.api.ApiUtils;
 import net.minecraft.nbt.CompoundNBT;
@@ -39,7 +39,7 @@ public class Connection
 
 	public Connection(BlockPos pos, int idA, int idB)
 	{
-		this.type = WireType.STEEL;//TODO
+		this.type = WireType.INTERNAL_CONNECTION;
 		this.endA = new ConnectionPoint(pos, idA);
 		this.endB = new ConnectionPoint(pos, idB);
 		this.internal = true;
