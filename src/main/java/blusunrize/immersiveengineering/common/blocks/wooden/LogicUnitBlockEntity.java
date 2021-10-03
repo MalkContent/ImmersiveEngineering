@@ -53,9 +53,9 @@ public class LogicUnitBlockEntity extends IEBaseBlockEntity implements IIEInvent
 
 	private final NonNullList<ItemStack> inventory = NonNullList.withSize(10, ItemStack.EMPTY);
 
-	private final Map<Direction, boolean[]> inputs = new EnumMap<>(Direction.class);
-	private final boolean[] registers = new boolean[SIZE_REGISTERS];
-	private final boolean[] outputs = new boolean[SIZE_COLORS];
+	private final Map<Direction, byte[]> inputs = new EnumMap<>(Direction.class);
+	private final byte[] registers = new byte[SIZE_REGISTERS];
+	private final byte[] outputs = new byte[SIZE_COLORS];
 
 	public LogicUnitBlockEntity(BlockPos pos, BlockState state)
 	{
@@ -156,9 +156,9 @@ public class LogicUnitBlockEntity extends IEBaseBlockEntity implements IIEInvent
 
 	private void updateOutputs()
 	{
-		boolean[] outPre = Arrays.copyOf(outputs, SIZE_COLORS);
-		Arrays.fill(registers, false);
-		Arrays.fill(outputs, false);
+		byte[] outPre = Arrays.copyOf(outputs, SIZE_COLORS);
+		Arrays.fill(registers, (byte)0);
+		Arrays.fill(outputs, (byte)0);
 		this.inventory.stream()
 				.map(LogicCircuitBoardItem::getInstruction)
 				.filter(Objects::nonNull)
@@ -184,14 +184,11 @@ public class LogicUnitBlockEntity extends IEBaseBlockEntity implements IIEInvent
 						public void onChange(ConnectionPoint cp, RedstoneNetworkHandler handler, Direction side)
 						{
 							byte[] foreignInputs = handler.getValuesExcluding(cp);
-							boolean[] sideInputs = inputs.getOrDefault(side, new boolean[SIZE_COLORS]);
-							boolean[] preInput = Arrays.copyOf(sideInputs, SIZE_COLORS);
-							for(int i = 0; i < SIZE_COLORS; i++)
-								sideInputs[i] = foreignInputs[i] > 0;
+							byte[] preInput = inputs.getOrDefault(side, new byte[SIZE_COLORS]);
 							// if the input changed, update and run circuits
-							if(!Arrays.equals(preInput, sideInputs))
+							if(!Arrays.equals(preInput, foreignInputs))
 							{
-								inputs.put(side, sideInputs);
+								inputs.put(side, foreignInputs);
 								combinedInputs.reset();
 								updateOutputs();
 							}
@@ -201,8 +198,8 @@ public class LogicUnitBlockEntity extends IEBaseBlockEntity implements IIEInvent
 						public void updateInput(byte[] signals, ConnectionPoint cp, Direction side)
 						{
 							for(DyeColor dye : DyeColor.values())
-								if(outputs[dye.getId()])
-									signals[dye.getId()] = (byte)15;
+								if(outputs[dye.getId()]>signals[dye.getId()])
+									signals[dye.getId()] = outputs[dye.getId()];
 						}
 					}
 			);
@@ -219,16 +216,16 @@ public class LogicUnitBlockEntity extends IEBaseBlockEntity implements IIEInvent
 		return super.getCapability(capability, facing);
 	}
 
-	ResettableLazy<boolean[]> combinedInputs = new ResettableLazy<>(() -> {
-		boolean[] ret = new boolean[SIZE_COLORS];
-		for(boolean[] side : this.inputs.values())
+	ResettableLazy<byte[]> combinedInputs = new ResettableLazy<>(() -> {
+		byte[] ret = new byte[SIZE_COLORS];
+		for(byte[] side : this.inputs.values())
 			for(int i = 0; i < SIZE_COLORS; ++i)
 				ret[i] |= side[i];
 		return ret;
 	});
 
 	@Override
-	public boolean getLogicCircuitRegister(LogicCircuitRegister register)
+	public byte getLogicCircuitRegister(LogicCircuitRegister register)
 	{
 		if(register.ordinal() < SIZE_COLORS)
 			return combinedInputs.get()[register.ordinal()];
@@ -236,7 +233,7 @@ public class LogicUnitBlockEntity extends IEBaseBlockEntity implements IIEInvent
 	}
 
 	@Override
-	public void setLogicCircuitRegister(LogicCircuitRegister register, boolean state)
+	public void setLogicCircuitRegister(LogicCircuitRegister register, byte state)
 	{
 		if(register.ordinal() < SIZE_COLORS)
 			this.outputs[register.ordinal()] = state;

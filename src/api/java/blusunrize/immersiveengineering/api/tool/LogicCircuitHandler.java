@@ -21,23 +21,66 @@ import net.minecraftforge.common.util.Constants.NBT;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.function.Predicate;
+import java.util.function.Function;
 
 public class LogicCircuitHandler
 {
+	public static boolean boolifyRSV(byte redStoneValue)
+	{
+		return redStoneValue!=0;
+	}
+
+	private static byte deboolifyRSV(boolean redStoneValue)
+	{
+		return redStoneValue?(byte)15: (byte)0;
+	}
+
+	private static byte wrapBooleanLogic(byte[] args, BooleanLogicCircuitOperator boolOp)
+	{
+		boolean[] boolArgs = new boolean[args.length];
+		for(int i = 0; i < args.length; i++)
+		{
+			boolArgs[i] = boolifyRSV(args[i]);
+		}
+		return deboolifyRSV(boolOp.apply(boolArgs));
+	}
+
+	private enum BooleanLogicCircuitOperator
+	{
+		NOT(args -> !args[0]),
+		OR(args -> args[0]|args[1]),
+		AND(args -> args[0]&args[1]),
+		XOR(args -> args[0]^args[1]),
+		NOR(args -> !args[0]|args[1]),
+		NAND(args -> !args[0]&args[1]),
+		XNOR(args -> args[0]==args[1]);
+
+		private final Function<boolean[], Boolean> operator;
+
+		BooleanLogicCircuitOperator(Function<boolean[], Boolean> operator)
+		{
+			this.operator = operator;
+		}
+
+		public boolean apply(boolean[] args)
+		{
+			return this.operator.apply(args);
+		}
+	}
+
 	public enum LogicCircuitOperator
 	{
 		SET(1, args -> args[0], 0),
-		NOT(1, args -> !args[0], 1),
-		OR(2, args -> args[0]|args[1], 3),
-		AND(2, args -> args[0]&args[1], 2),
-		XOR(2, args -> args[0]^args[1], 4),
-		NOR(2, args -> !(args[0]|args[1]), 4),
-		NAND(2, args -> !(args[0]&args[1]), 1),
-		XNOR(2, args -> args[0]==args[1], 5);
+		NOT(1, args -> wrapBooleanLogic(args, BooleanLogicCircuitOperator.NOT), 1),
+		OR(2, args -> wrapBooleanLogic(args, BooleanLogicCircuitOperator.OR), 3),
+		AND(2, args -> wrapBooleanLogic(args, BooleanLogicCircuitOperator.AND), 2),
+		XOR(2, args -> wrapBooleanLogic(args, BooleanLogicCircuitOperator.XOR), 4),
+		NOR(2, args -> wrapBooleanLogic(args, BooleanLogicCircuitOperator.NOR), 4),
+		NAND(2, args -> wrapBooleanLogic(args, BooleanLogicCircuitOperator.NAND), 1),
+		XNOR(2, args -> wrapBooleanLogic(args, BooleanLogicCircuitOperator.XNOR), 5);
 
 		private final int argumentCount;
-		private final Predicate<boolean[]> operator;
+		private final Function<byte[], Byte> operator;
 		private final int complexity;
 
 		public static final int TOTAL_MAX_INPUTS = Arrays.stream(values())
@@ -45,7 +88,7 @@ public class LogicCircuitHandler
 				.max()
 				.orElse(1);
 
-		LogicCircuitOperator(int argumentCount, Predicate<boolean[]> operator, int complexity)
+		LogicCircuitOperator(int argumentCount, Function<byte[], Byte> operator, int complexity)
 		{
 			this.argumentCount = argumentCount;
 			this.operator = operator;
@@ -62,9 +105,9 @@ public class LogicCircuitHandler
 			return complexity;
 		}
 
-		public boolean apply(boolean[] args)
+		public byte apply(byte[] args)
 		{
-			return this.operator.test(args);
+			return this.operator.apply(args);
 		}
 
 		@Nullable
@@ -140,7 +183,7 @@ public class LogicCircuitHandler
 
 		public void apply(ILogicCircuitHandler handler)
 		{
-			boolean[] bInputs = new boolean[operator.getArgumentCount()];
+			byte[] bInputs = new byte[operator.getArgumentCount()];
 			for(int i = 0; i < inputs.length; i++)
 				bInputs[i] = handler.getLogicCircuitRegister(inputs[i]);
 			handler.setLogicCircuitRegister(output, operator.apply(bInputs));
@@ -177,8 +220,8 @@ public class LogicCircuitHandler
 
 	public interface ILogicCircuitHandler
 	{
-		boolean getLogicCircuitRegister(LogicCircuitRegister register);
+		byte getLogicCircuitRegister(LogicCircuitRegister register);
 
-		void setLogicCircuitRegister(LogicCircuitRegister register, boolean state);
+		void setLogicCircuitRegister(LogicCircuitRegister register, byte state);
 	}
 }
