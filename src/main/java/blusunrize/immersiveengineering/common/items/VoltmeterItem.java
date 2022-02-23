@@ -18,6 +18,7 @@ import blusunrize.immersiveengineering.api.wires.IImmersiveConnectable;
 import blusunrize.immersiveengineering.api.wires.LocalWireNetwork;
 import blusunrize.immersiveengineering.api.wires.localhandlers.EnergyTransferHandler;
 import blusunrize.immersiveengineering.api.wires.localhandlers.EnergyTransferHandler.Path;
+import blusunrize.immersiveengineering.api.wires.redstone.IRedstoneConnector;
 import blusunrize.immersiveengineering.api.wires.utils.WireLink;
 import blusunrize.immersiveengineering.api.wires.utils.WirecoilUtils;
 import blusunrize.immersiveengineering.common.network.MessageRequestEnergyUpdate;
@@ -27,10 +28,10 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.*;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
@@ -105,7 +106,25 @@ public class VoltmeterItem extends IEBaseItem
 				ConnectionPoint cp = ((IImmersiveConnectable)bEntity).getTargetedPoint(targetingInfo, delta);
 				if(cp==null)
 					return InteractionResult.FAIL;
-				if(!WirecoilUtils.hasWireLink(stack))
+				if(bEntity instanceof IRedstoneConnector redstoneConnector)
+				{
+					MutableComponent message = new TranslatableComponent(Lib.CHAT_INFO+"redstoneChannelLevels").append("\n");
+					for(int i = 0; i < 16; i++)
+					{
+						byte channelValue = redstoneConnector.getValue(i);
+						if(channelValue < 10)
+							message.append(new TextComponent(" "));
+						message.append(new TextComponent(Byte.toString(channelValue))
+								.withStyle(
+										Style.EMPTY.withColor(DyeColor.byId(i).getTextColor())
+								)
+						);
+						if(i < 15)
+							message.append(new TextComponent((i+1)%4==0?"\n": ", "));
+					}
+					ChatUtils.sendServerNoSpamMessages(player, message);
+				}
+				else if(!WirecoilUtils.hasWireLink(stack))
 				{
 					WireLink link = WireLink.create(cp, world, delta, targetingInfo);
 					link.writeToItem(stack);

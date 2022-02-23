@@ -29,4 +29,12 @@ public interface IRedstoneConnector extends IImmersiveConnectable
 	 * @param signals the values of the RS channels up to this point. Modify this array to change output values.
 	 */
 	void updateInput(byte[] signals, ConnectionPoint cp);
+
+	/**
+	 * Called to retrieve the signal value of a specific channel in the connectors redstone wire network
+	 *
+	 * @param redstoneChannel the number of the queried channel, ranged 0-15
+	 * @return the signal value of the queried channel, ranged 0-15
+	 */
+	byte getValue(int redstoneChannel);
 }

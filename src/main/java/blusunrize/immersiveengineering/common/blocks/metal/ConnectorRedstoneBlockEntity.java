@@ -49,6 +49,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.Objects;
 
 import static blusunrize.immersiveengineering.api.wires.WireType.REDSTONE_CATEGORY;
 
@@ -78,6 +79,13 @@ public class ConnectorRedstoneBlockEntity extends ImmersiveConnectableBlockEntit
 			globalNet.getLocalNet(worldPosition)
 					.getHandler(RedstoneNetworkHandler.ID, RedstoneNetworkHandler.class)
 					.updateValues();
+	}
+
+	public byte getValue(int redstoneChannel)
+	{
+		return Objects.requireNonNull(
+				globalNet.getLocalNet(worldPosition).getHandler(RedstoneNetworkHandler.ID, RedstoneNetworkHandler.class)
+		).getValue(redstoneChannel);
 	}
 
 	@Override
