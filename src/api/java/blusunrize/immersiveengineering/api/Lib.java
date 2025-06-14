@@ -9,6 +9,7 @@
 package blusunrize.immersiveengineering.api;
 
 
+import blusunrize.immersiveengineering.api.tool.INoisyTool;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -27,8 +28,10 @@ import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.BlockSetType.PressurePlateSensitivity;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.neoforged.fml.common.asm.enumextension.EnumProxy;
+import net.neoforged.neoforge.capabilities.ItemCapability;
 import net.neoforged.neoforge.common.ItemAbility;
 import net.neoforged.neoforge.common.SimpleTier;
+import org.jetbrains.annotations.Nullable;
 
 import static blusunrize.immersiveengineering.api.IEApi.ieLoc;
 
@@ -209,4 +212,10 @@ public class Lib
 	);
 
 	public static final ItemAbility WIRECUTTER_DIG = ItemAbility.get("wirecutter_dig");
+
+	public static final class NoisyToolCapabilities {
+		public static final ItemCapability<INoisyTool, @Nullable Void> ITEM = ItemCapability.createVoid(ieLoc("noisy_tool"), INoisyTool.class);
+
+		private NoisyToolCapabilities() {}
+	}
 }
