@@ -60,7 +60,7 @@ public class BuzzsawNoisyToolHandler extends NoisyToolItemStack
 	}
 
 	@Override
-	public boolean ableToMakeNoise()
+	public boolean isActive()
 	{
 		return Tools.BUZZSAW.get().canToolBeUsed(stack);
 	}

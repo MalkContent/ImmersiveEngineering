@@ -48,7 +48,7 @@ public class NoisyToolSoundHandler
 		Map<EquipmentSlot, NoisyToolSoundGroup> result = noisyToolSoundGroups.get(entity);
 		if(result!=null)
 			return result;
-		if(INoisyTool.isAbleNoisyTool(entity.getMainHandItem())||INoisyTool.isAbleNoisyTool(entity.getOffhandItem()))
+		if(INoisyTool.isActiveNoisyTool(entity.getMainHandItem())||INoisyTool.isActiveNoisyTool(entity.getOffhandItem()))
 		{
 			result = new HashMap<>();
 			noisyToolSoundGroups.put(entity, result);
@@ -87,7 +87,7 @@ public class NoisyToolSoundHandler
 					noisyToolSoundGroups.remove(entity);
 			}
 		}
-		else if(INoisyTool.isAbleNoisyTool(handItem))
+		else if(INoisyTool.isActiveNoisyTool(handItem))
 		{
 			soundGroup = new NoisyToolSoundGroup(handItem, entity, hotbarSlot);
 			ntsgs.put(slot, soundGroup);
@@ -147,7 +147,7 @@ public class NoisyToolSoundHandler
 	@SubscribeEvent(priority = EventPriority.LOWEST) //lowest priority, because if the event got cancelled, we don't wanna play the sound
 	public static void harvestCheck(LeftClickBlock ev)
 	{
-		if(INoisyTool.isAbleNoisyTool(ev.getItemStack()))
+		if(INoisyTool.isActiveNoisyTool(ev.getItemStack()))
 		{
 			LivingEntity noisyToolHolder = ev.getEntity();
 			if(noisyToolHolder instanceof Player player&&player.isCreative()) // skip for creative players, because remote creative players don't send stop/abort on block break
@@ -173,7 +173,7 @@ public class NoisyToolSoundHandler
 		if(ev.getTarget() instanceof LivingEntity) // a) for parity with LivingIncomingDamageEvent, b) MCs extra attack sounds also only happen on LivingEntities
 		{
 			Player player = ev.getEntity();
-			if(player.level().isClientSide()&&INoisyTool.isAbleNoisyTool(player.getItemBySlot(EquipmentSlot.MAINHAND)))
+			if(player.level().isClientSide()&&INoisyTool.isActiveNoisyTool(player.getItemBySlot(EquipmentSlot.MAINHAND)))
 			{
 				handleAttack(player);
 			}
@@ -186,7 +186,7 @@ public class NoisyToolSoundHandler
 		// no null check for ev.getSource, because ev.getSource() is never null according to intelliJ: "Method 'getSource' inherits container annotation, thus 'non-null'"
 		// All I see are final fields and no annotations, but should be the same thing.
 		// if stuff burns some day down the line because that changes, here's a place to check, I guess
-		if(ev.getSource().getEntity() instanceof LivingEntity noisyToolHolder&&INoisyTool.isAbleNoisyTool(noisyToolHolder.getItemBySlot(EquipmentSlot.MAINHAND)))
+		if(ev.getSource().getEntity() instanceof LivingEntity noisyToolHolder&&INoisyTool.isActiveNoisyTool(noisyToolHolder.getItemBySlot(EquipmentSlot.MAINHAND)))
 		{
 			//sends the packet to every tracking player, except noisyToolHolder (if noisyToolHolder is a player)
 			PacketDistributor.sendToPlayersTrackingEntity(noisyToolHolder, new MessageNoisyToolAttack(noisyToolHolder));

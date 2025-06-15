@@ -55,7 +55,7 @@ public class DrillNoisyToolHandler extends NoisyToolItemStack
 	}
 
 	@Override
-	public boolean ableToMakeNoise()
+	public boolean isActive()
 	{
 		return Tools.DRILL.get().canToolBeUsed(stack);
 	}

@@ -28,7 +28,7 @@ public class NoisyToolSoundGroup
 {
 	private static final int ATTACK_DURATION = 6-1; // in ticks. -1 cause first tick is free
 	private static final int FADE_DURATION = 20-1; // in ticks. -1 cause first tick is free
-	private INoisyTool noisyToolItem;
+	private INoisyTool noisyToolItem; //TODO: figure out how to deal with the constant refreshing.. or if I should to begin with.. maybe go back to tracking item stacks?
 	private final int hotbarSlot;
 	private final LivingEntity noisyToolHolder;
 	private final int harvestTimeoutGrace;
@@ -60,7 +60,7 @@ public class NoisyToolSoundGroup
 
 	public boolean checkItemValid(ItemStack handItemStack, int hotbarSlot)
 	{
-		if(this.hotbarSlot!=hotbarSlot||!checkItemMatch(handItemStack)||!noisyToolItem.ableToMakeNoise())
+		if(this.hotbarSlot!=hotbarSlot||!checkItemMatch(handItemStack)||!noisyToolItem.isActive())
 		{
 			switchMotorOnOff(false);
 			return false;

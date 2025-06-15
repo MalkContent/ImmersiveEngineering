@@ -44,18 +44,18 @@ public interface INoisyTool
 
 	Holder<SoundEvent> getHarvestSound();
 
-	boolean ableToMakeNoise();
+	boolean isActive();
 
 	/**
-	 * Checks if the stack item is a NoisyTool and is able to make noise.
+	 * Checks if the stack item is a NoisyTool and is active (and thus able) to make noise.
 	 *
 	 * @param stack the ItemStack to check. May be any ItemStack.
 	 * @return true if the stack item is a NoisyTool and is able to make noise.
 	 */
-	static boolean isAbleNoisyTool(ItemStack stack)
+	static boolean isActiveNoisyTool(ItemStack stack)
 	{
 		INoisyTool noisyTool = stack.getCapability(NoisyToolCapabilities.ITEM);
-		return noisyTool!=null&&noisyTool.ableToMakeNoise();
+		return noisyTool!=null&&noisyTool.isActive();
 	}
 
 	/**
@@ -72,7 +72,7 @@ public interface INoisyTool
 	 */
 	default boolean noisySameStack(ItemStack otherStack)
 	{
-		INoisyTool otherNoisyTool = getStack().getCapability(NoisyToolCapabilities.ITEM);
+		INoisyTool otherNoisyTool = otherStack.getCapability(NoisyToolCapabilities.ITEM);
 
 		return this.equals(otherNoisyTool)
 				&&this.getIdleSound().equals(otherNoisyTool.getIdleSound())
