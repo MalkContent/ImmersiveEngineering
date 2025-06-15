@@ -10,10 +10,12 @@ package blusunrize.immersiveengineering.common.items;
 
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.IETags;
+import blusunrize.immersiveengineering.api.Lib.NoisyToolCapabilities;
 import blusunrize.immersiveengineering.api.shader.CapabilityShader;
 import blusunrize.immersiveengineering.api.shader.CapabilityShader.ShaderWrapper_Item;
 import blusunrize.immersiveengineering.api.shader.ShaderRegistry;
 import blusunrize.immersiveengineering.api.shader.ShaderRegistry.ShaderAndCase;
+import blusunrize.immersiveengineering.api.tool.NoisyToolItemStack;
 import blusunrize.immersiveengineering.api.tool.upgrade.UpgradeEffect;
 import blusunrize.immersiveengineering.api.tool.INoisyTool;
 import blusunrize.immersiveengineering.common.fluids.IEItemFluidHandler;
@@ -42,6 +44,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities.FluidHandler;
+import net.neoforged.neoforge.capabilities.ItemCapability;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.fluids.FluidUtil;
@@ -53,7 +56,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public abstract class DieselToolItem extends UpgradeableToolItem implements IAdvancedFluidItem, INoisyTool
+public abstract class DieselToolItem extends UpgradeableToolItem implements IAdvancedFluidItem
 {
 	protected static final int CAPACITY = 2*FluidType.BUCKET_VOLUME;
 
@@ -242,22 +245,4 @@ public abstract class DieselToolItem extends UpgradeableToolItem implements IAdv
 	public abstract int getMaxHeadDamage(ItemStack stack);
 
 	public abstract int getHeadDamage(ItemStack stack);
-
-	@Override
-	public abstract Holder<SoundEvent> getIdleSound(ItemStack stack);
-
-	@Override
-	public abstract Holder<SoundEvent> getBusySound(ItemStack stack);
-
-	@Override
-	public abstract Holder<SoundEvent> getFadingSound(ItemStack stack);
-
-	@Override
-	public abstract Holder<SoundEvent> getAttackSound(ItemStack stack);
-
-	@Override
-	public abstract Holder<SoundEvent> getHarvestSound(ItemStack stack);
-
-	@Override
-	public abstract boolean ableToMakeNoise(ItemStack stack);
 }

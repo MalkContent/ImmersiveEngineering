@@ -9,6 +9,8 @@
 package blusunrize.immersiveengineering.common.items;
 
 import blusunrize.immersiveengineering.api.Lib;
+import blusunrize.immersiveengineering.api.Lib.NoisyToolCapabilities;
+import blusunrize.immersiveengineering.api.tool.NoisyToolItemStack;
 import blusunrize.immersiveengineering.common.config.IEServerConfig;
 import blusunrize.immersiveengineering.common.config.IEServerConfig.Machines.CapacitorConfig;
 import blusunrize.immersiveengineering.common.register.IEBlocks.MetalDevices;
@@ -17,6 +19,8 @@ import blusunrize.immersiveengineering.common.register.IEFluids;
 import blusunrize.immersiveengineering.common.register.IEItems.Misc;
 import blusunrize.immersiveengineering.common.register.IEItems.Tools;
 import blusunrize.immersiveengineering.common.register.IEItems.Weapons;
+import blusunrize.immersiveengineering.common.util.sound.noisytoolhandlers.BuzzsawNoisyToolHandler;
+import blusunrize.immersiveengineering.common.util.sound.noisytoolhandlers.DrillNoisyToolHandler;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -41,7 +45,9 @@ public class ItemCapabilityRegistration
 		registerCapacitorCapabilities(event, MetalDevices.CAPACITOR_MV, IEServerConfig.MACHINES.mvCapConfig);
 		registerCapacitorCapabilities(event, MetalDevices.CAPACITOR_HV, IEServerConfig.MACHINES.hvCapConfig);
 		DieselToolItem.registerCapabilities(forType(event, Tools.DRILL));
+		forType(event, Tools.DRILL).register(NoisyToolCapabilities.ITEM, (stack, $) -> new DrillNoisyToolHandler(stack));
 		DieselToolItem.registerCapabilities(forType(event, Tools.BUZZSAW));
+		forType(event, Tools.BUZZSAW).register(NoisyToolCapabilities.ITEM, (stack, $) -> new BuzzsawNoisyToolHandler(stack));
 		IEShieldItem.registerCapabilities(forType(event, Misc.SHIELD));
 		JerrycanItem.registerCapabilities(forType(event, Misc.JERRYCAN));
 		PotionBucketItem.registerCapabilities(forType(event, Misc.POTION_BUCKET));

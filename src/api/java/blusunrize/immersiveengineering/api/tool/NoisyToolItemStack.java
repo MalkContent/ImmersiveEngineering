@@ -8,47 +8,24 @@
 
 package blusunrize.immersiveengineering.api.tool;
 
+import blusunrize.immersiveengineering.api.Lib.NoisyToolCapabilities;
 import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
-public class NoisyToolItemStack implements INoisyTool
+public abstract class NoisyToolItemStack implements INoisyTool
 {
-	NoisyToolItemStack
+	protected ItemStack stack;
 
-	@Override
-	public Holder<SoundEvent> getIdleSound(ItemStack stack)
+	public NoisyToolItemStack(ItemStack stack)
 	{
-		return null;
+		this.stack = stack;
 	}
 
 	@Override
-	public Holder<SoundEvent> getBusySound(ItemStack stack)
+	public @Nullable ItemStack getStack()
 	{
-		return null;
-	}
-
-	@Override
-	public Holder<SoundEvent> getFadingSound(ItemStack stack)
-	{
-		return null;
-	}
-
-	@Override
-	public Holder<SoundEvent> getAttackSound(ItemStack stack)
-	{
-		return null;
-	}
-
-	@Override
-	public Holder<SoundEvent> getHarvestSound(ItemStack stack)
-	{
-		return null;
-	}
-
-	@Override
-	public boolean ableToMakeNoise(ItemStack stack)
-	{
-		return false;
+		return stack;
 	}
 }

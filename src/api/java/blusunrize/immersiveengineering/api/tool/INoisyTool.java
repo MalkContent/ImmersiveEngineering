@@ -8,27 +8,30 @@
 
 package blusunrize.immersiveengineering.api.tool;
 
+import blusunrize.immersiveengineering.api.Lib.NoisyToolCapabilities;
 import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.capabilities.ItemCapability;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * An interface for Items (not ItemStacks, that would be stupid), no guarantees if it is used for non-Items.
+ * It is expected that implementing classes hold an ItemStack, but not required.
  */
 public interface INoisyTool
 {
-	Holder<SoundEvent> getIdleSound(ItemStack stack);
+	Holder<SoundEvent> getIdleSound();
 
-	Holder<SoundEvent> getBusySound(ItemStack stack);
+	Holder<SoundEvent> getBusySound();
 
 	/**
 	 * Due to lacking information on sound duration, the duration is hard coded. Any Fading sounds need to be <b>more</b> than <b>1.0s</b> in duration.
 	 * The sound cuts off after <b>1.0s</b>, but a little bit of excess duration (>~0.01s) is required for the noisy tool sound stage machine to work correctly
 	 *
-	 * @param stack The stack of the INoisyTool, makes the sound stack sensitive if desired.
 	 * @return fading sound
 	 */
-	Holder<SoundEvent> getFadingSound(ItemStack stack);
+	Holder<SoundEvent> getFadingSound();
 
 	/**
 	 * Due to lacking information on sound duration, the duration is hard coded. Any Attack sounds need to be <b>more</b> than <b>0.3s</b> in duration.
@@ -36,14 +39,13 @@ public interface INoisyTool
 	 * Having a too small excess duration leads to notable gaps in the audio when transitioning, which is why the default attack sounds have ~0.06s extra.
 	 * Cause they used to be 0.35s and then it caused issues.. Take heed ^^
 	 *
-	 * @param stack The stack of the INoisyTool, makes the sound stack sensitive if desired.
 	 * @return attack sound
 	 */
-	Holder<SoundEvent> getAttackSound(ItemStack stack);
+	Holder<SoundEvent> getAttackSound();
 
-	Holder<SoundEvent> getHarvestSound(ItemStack stack);
+	Holder<SoundEvent> getHarvestSound();
 
-	boolean ableToMakeNoise(ItemStack stack);
+	boolean ableToMakeNoise();
 
 	/**
 	 * Checks if the stack item is a NoisyTool and is able to make noise.
@@ -53,7 +55,8 @@ public interface INoisyTool
 	 */
 	static boolean isAbleNoisyTool(ItemStack stack)
 	{
-		return stack.getItem() instanceof INoisyTool noisyTool&&noisyTool.ableToMakeNoise(stack);
+		INoisyTool noisyTool = stack.getCapability(NoisyToolCapabilities.ITEM);
+		return noisyTool!=null&&noisyTool.ableToMakeNoise();
 	}
 
 	/**
@@ -65,17 +68,21 @@ public interface INoisyTool
 	 * <p>
 	 * This check also assumes, that it has already been checked and confirmed, that the stacks are not identical
 	 *
-	 * @param mainStack the main stack of the comparison. Selects the Item to compare against
 	 * @param otherStack the stack mainStack is compared against
 	 * @return true if stacks are considered the same stack. By default: if stacks  produce the same sounds.
 	 */
-	default boolean noisySameStack(ItemStack mainStack, ItemStack otherStack)
+	default boolean noisySameStack(ItemStack otherStack)
 	{
-		return mainStack.getItem() instanceof INoisyTool noisyTool&&noisyTool.equals(otherStack.getItem())
-				&&noisyTool.getIdleSound(mainStack).equals(noisyTool.getIdleSound(otherStack))
-				&&noisyTool.getBusySound(mainStack).equals(noisyTool.getBusySound(otherStack))
-				&&noisyTool.getFadingSound(mainStack).equals(noisyTool.getFadingSound(otherStack))
-				&&noisyTool.getAttackSound(mainStack).equals(noisyTool.getAttackSound(otherStack))
-				&&noisyTool.getHarvestSound(mainStack).equals(noisyTool.getHarvestSound(otherStack));
+		INoisyTool otherNoisyTool = getStack().getCapability(NoisyToolCapabilities.ITEM);
+
+		return this.equals(otherNoisyTool)
+				&&this.getIdleSound().equals(otherNoisyTool.getIdleSound())
+				&&this.getBusySound().equals(otherNoisyTool.getBusySound())
+				&&this.getFadingSound().equals(otherNoisyTool.getFadingSound())
+				&&this.getAttackSound().equals(otherNoisyTool.getAttackSound())
+				&&this.getHarvestSound().equals(otherNoisyTool.getHarvestSound());
 	}
+
+	@Nullable
+	ItemStack getStack();
 }

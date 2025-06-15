@@ -8,6 +8,7 @@
 
 package blusunrize.immersiveengineering.common.util.sound;
 
+import blusunrize.immersiveengineering.api.Lib.NoisyToolCapabilities;
 import blusunrize.immersiveengineering.api.tool.INoisyTool;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
@@ -27,8 +28,7 @@ public class NoisyToolSoundGroup
 {
 	private static final int ATTACK_DURATION = 6-1; // in ticks. -1 cause first tick is free
 	private static final int FADE_DURATION = 20-1; // in ticks. -1 cause first tick is free
-	private final INoisyTool noisyToolItem;
-	private ItemStack noisyToolStack;
+	private INoisyTool noisyToolItem;
 	private final int hotbarSlot;
 	private final LivingEntity noisyToolHolder;
 	private final int harvestTimeoutGrace;
@@ -40,8 +40,7 @@ public class NoisyToolSoundGroup
 
 	public NoisyToolSoundGroup(ItemStack noisyToolStack, LivingEntity noisyToolHolder, int hotbarSlot)
 	{
-		this.noisyToolStack = noisyToolStack;
-		this.noisyToolItem = (INoisyTool)noisyToolStack.getItem();
+		this.noisyToolItem = noisyToolStack.getCapability(NoisyToolCapabilities.ITEM);
 		this.noisyToolHolder = noisyToolHolder;
 		this.hotbarSlot = hotbarSlot;
 		// shut off remote player's harvesting sound after 2 minutes
@@ -61,7 +60,7 @@ public class NoisyToolSoundGroup
 
 	public boolean checkItemValid(ItemStack handItemStack, int hotbarSlot)
 	{
-		if(this.hotbarSlot!=hotbarSlot||!checkItemMatch(handItemStack)||!noisyToolItem.ableToMakeNoise(handItemStack))
+		if(this.hotbarSlot!=hotbarSlot||!checkItemMatch(handItemStack)||!noisyToolItem.ableToMakeNoise())
 		{
 			switchMotorOnOff(false);
 			return false;
@@ -71,13 +70,13 @@ public class NoisyToolSoundGroup
 
 	private boolean checkItemMatch(ItemStack handItemStack)
 	{
-		if(noisyToolStack==handItemStack)
+		if(noisyToolItem.getStack()==handItemStack)
 		{
 			return true;
 		}
-		else if(noisyToolItem.noisySameStack(noisyToolStack, handItemStack))
+		else if(noisyToolItem.noisySameStack(handItemStack))
 		{
-			noisyToolStack = handItemStack;
+			noisyToolItem = handItemStack.getCapability(NoisyToolCapabilities.ITEM); //replace the tracked capability with the one from the current hand item
 			return true;
 		}
 		return false;
@@ -146,19 +145,19 @@ public class NoisyToolSoundGroup
 					updateHarvestState(null, false);
 				break;
 			case IDLE:
-				play(new NoisyToolMotorSoundLooping(noisyToolItem.getIdleSound(noisyToolStack).value(), newMotorState));
+				play(new NoisyToolMotorSoundLooping(noisyToolItem.getIdleSound().value(), newMotorState));
 				break;
 			case BUSY:
-				play(new NoisyToolMotorSoundLooping(noisyToolItem.getBusySound(noisyToolStack).value(), newMotorState));
+				play(new NoisyToolMotorSoundLooping(noisyToolItem.getBusySound().value(), newMotorState));
 				break;
 			case FADING:
-				play(new NoisyToolMotorSoundFinite(noisyToolItem.getFadingSound(noisyToolStack).value(), newMotorState, FADE_DURATION));
+				play(new NoisyToolMotorSoundFinite(noisyToolItem.getFadingSound().value(), newMotorState, FADE_DURATION));
 				break;
 			case ATTACK:
 				if(propagate)
 					// this SHOULD already be updated implicitly by stopping harvesting (because you can't harvest while attacking), but better safe than sorry
 					updateHarvestState(null, false);
-				play(new NoisyToolMotorSoundFinite(noisyToolItem.getAttackSound(noisyToolStack).value(), newMotorState, ATTACK_DURATION));
+				play(new NoisyToolMotorSoundFinite(noisyToolItem.getAttackSound().value(), newMotorState, ATTACK_DURATION));
 				break;
 		}
 		return true;
@@ -299,7 +298,7 @@ public class NoisyToolSoundGroup
 
 		protected NoisyToolHarvestSound(BlockPos targetBlockPos)
 		{
-			super(noisyToolItem.getHarvestSound(noisyToolStack).value());//ApiUtils.RANDOM_SOURCE);
+			super(noisyToolItem.getHarvestSound().value());//ApiUtils.RANDOM_SOURCE); //TODO remove me!
 
 			this.targetBlockPos = targetBlockPos;
 			this.x = targetBlockPos.getX()+0.5d;

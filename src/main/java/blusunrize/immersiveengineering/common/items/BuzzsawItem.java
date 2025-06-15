@@ -295,51 +295,6 @@ public class BuzzsawItem extends DieselToolItem implements IScrollwheel
 	}
 
 	@Override
-	public Holder<SoundEvent> getIdleSound(ItemStack stack)
-	{
-		return IESounds.buzzsaw_idle;
-	}
-
-	@Override
-	public Holder<SoundEvent> getBusySound(ItemStack stack)
-	{
-		return IESounds.buzzsaw_busy;
-	}
-
-	@Override
-	public Holder<SoundEvent> getFadingSound(ItemStack stack)
-	{
-		return IESounds.buzzsaw_fade;
-	}
-
-	@Override
-	public Holder<SoundEvent> getAttackSound(ItemStack stack)
-	{
-		return IESounds.buzzsaw_attack;
-	}
-
-	@Override
-	public Holder<SoundEvent> getHarvestSound(ItemStack stack)
-	{
-		Item headitem = getHead(stack).getItem();
-		if(headitem instanceof GrindingDiskItem||headitem instanceof RockcutterItem)
-			return IESounds.buzzsaw_harvest_grind;
-		return IESounds.buzzsaw_harvest_saw;
-	}
-
-	@Override
-	public boolean ableToMakeNoise(ItemStack stack)
-	{
-		return canToolBeUsed(stack);
-	}
-
-	@Override
-	public boolean noisySameStack(ItemStack mainStack, ItemStack otherStack)
-	{
-		return mainStack.getItem() instanceof BuzzsawItem buzzsawItem&&buzzsawItem.equals(otherStack.getItem())&&getHead(mainStack).getItem().equals(getHead(otherStack).getItem());
-	}
-
-	@Override
 	public boolean mineBlock(ItemStack stack, Level world, BlockState state, BlockPos pos, LivingEntity living)
 	{
 		consumeDurability(stack, world, state, pos, living);

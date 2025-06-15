@@ -234,49 +234,6 @@ public class DrillItem extends DieselToolItem
 	}
 
 	@Override
-	public Holder<SoundEvent> getIdleSound(ItemStack stack)
-	{
-		return IESounds.drill_idle;
-	}
-
-	@Override
-	public Holder<SoundEvent> getBusySound(ItemStack stack)
-	{
-		return IESounds.drill_busy;
-	}
-
-	@Override
-	public Holder<SoundEvent> getFadingSound(ItemStack stack)
-	{
-		return IESounds.drill_fade;
-	}
-
-
-	@Override
-	public Holder<SoundEvent> getAttackSound(ItemStack stack)
-	{
-		return IESounds.drill_attack;
-	}
-
-	@Override
-	public Holder<SoundEvent> getHarvestSound(ItemStack stack)
-	{
-		return IESounds.drill_harvest;
-	}
-
-	@Override
-	public boolean ableToMakeNoise(ItemStack stack)
-	{
-		return canToolBeUsed(stack);
-	}
-
-	@Override
-	public boolean noisySameStack(ItemStack mainStack, ItemStack otherStack)
-	{
-		return mainStack.getItem() instanceof DrillItem drillItem&&drillItem.equals(otherStack.getItem());
-	}
-
-	@Override
 	public Tier getHarvestLevel(ItemStack stack, @Nullable Player player)
 	{
 		ItemStack head = getHead(stack);
