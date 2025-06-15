@@ -10,24 +10,24 @@ package blusunrize.immersiveengineering.common.items;
 
 import blusunrize.immersiveengineering.api.IETags;
 import blusunrize.immersiveengineering.api.Lib;
+import blusunrize.immersiveengineering.api.Lib.NoisyToolCapabilities;
 import blusunrize.immersiveengineering.api.client.TextUtils;
 import blusunrize.immersiveengineering.api.tool.IDrillHead;
 import blusunrize.immersiveengineering.api.tool.upgrade.UpgradeEffect;
 import blusunrize.immersiveengineering.common.fluids.IEItemFluidHandler;
 import blusunrize.immersiveengineering.common.gui.IESlot;
-import blusunrize.immersiveengineering.common.util.IESounds;
+import blusunrize.immersiveengineering.common.register.IEItems.Tools;
 import blusunrize.immersiveengineering.common.util.Utils;
+import blusunrize.immersiveengineering.common.util.sound.noisytoolhandlers.DrillNoisyToolHandler;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
@@ -70,6 +70,12 @@ public class DrillItem extends DieselToolItem
 	public DrillItem()
 	{
 		super(new Properties().stacksTo(1).component(DRILL_SINGLEBLOCK, false), TYPE, 5);
+	}
+
+	public static void registerCapabilities(ItemCapabilityRegistration.ItemCapabilityRegistrar registrar)
+	{
+		DieselToolItem.registerCapabilities(registrar);
+		registrar.register(NoisyToolCapabilities.ITEM, (stack, $) -> new DrillNoisyToolHandler(stack));
 	}
 
 	/* ------------- WORKBENCH & INVENTORY ------------- */

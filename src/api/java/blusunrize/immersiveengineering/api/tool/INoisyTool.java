@@ -12,7 +12,6 @@ import blusunrize.immersiveengineering.api.Lib.NoisyToolCapabilities;
 import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.capabilities.ItemCapability;
 import org.jetbrains.annotations.Nullable;
 
 /**

@@ -298,7 +298,7 @@ public class NoisyToolSoundGroup
 
 		protected NoisyToolHarvestSound(BlockPos targetBlockPos)
 		{
-			super(noisyToolItem.getHarvestSound().value());//ApiUtils.RANDOM_SOURCE); //TODO remove me!
+			super(noisyToolItem.getHarvestSound().value());
 
 			this.targetBlockPos = targetBlockPos;
 			this.x = targetBlockPos.getX()+0.5d;

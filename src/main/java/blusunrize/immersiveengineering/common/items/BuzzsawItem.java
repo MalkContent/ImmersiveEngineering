@@ -11,6 +11,7 @@ package blusunrize.immersiveengineering.common.items;
 import blusunrize.immersiveengineering.api.ApiUtils;
 import blusunrize.immersiveengineering.api.IETags;
 import blusunrize.immersiveengineering.api.Lib;
+import blusunrize.immersiveengineering.api.Lib.NoisyToolCapabilities;
 import blusunrize.immersiveengineering.api.client.TextUtils;
 import blusunrize.immersiveengineering.api.tool.upgrade.UpgradeEffect;
 import blusunrize.immersiveengineering.common.fluids.IEItemFluidHandler;
@@ -20,8 +21,8 @@ import blusunrize.immersiveengineering.common.items.upgrades.ToolUpgrade;
 import blusunrize.immersiveengineering.common.register.IEDataComponents;
 import blusunrize.immersiveengineering.common.register.IEItems.Misc;
 import blusunrize.immersiveengineering.common.register.IEItems.Tools;
-import blusunrize.immersiveengineering.common.util.IESounds;
 import blusunrize.immersiveengineering.common.util.Utils;
+import blusunrize.immersiveengineering.common.util.sound.noisytoolhandlers.BuzzsawNoisyToolHandler;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -79,6 +80,12 @@ public class BuzzsawItem extends DieselToolItem implements IScrollwheel
 	public BuzzsawItem()
 	{
 		super(new Properties().stacksTo(1), TYPE, 5);
+	}
+
+	public static void registerCapabilities(ItemCapabilityRegistration.ItemCapabilityRegistrar registrar)
+	{
+		DieselToolItem.registerCapabilities(registrar);
+		registrar.register(NoisyToolCapabilities.ITEM, (stack, $) -> new BuzzsawNoisyToolHandler(stack));
 	}
 
 	/* ------------- WORKBENCH & INVENTORY ------------- */
